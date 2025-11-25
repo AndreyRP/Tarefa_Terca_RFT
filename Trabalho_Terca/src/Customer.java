@@ -2,8 +2,8 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 public class Customer {
-   private String _name;
-   private Vector _rentals = new Vector();
+   private static String _name;
+   private static Vector _rentals = new Vector();
 
    public Customer (String name){
       _name = name;
@@ -13,31 +13,11 @@ public class Customer {
       _rentals.addElement(arg);
    }
    
-   public String getName (){
+   public static String getName (){
       return _name;
    }
-  
-  public String statement() {
-     double totalAmount = 0;
-     int frequentRenterPoints = 0;
-     Enumeration rentals = _rentals.elements();
-     String result = "Rental Record for " + getName() + "\n";
-     Rental each = (Rental) rentals.nextElement();
-     while (rentals.hasMoreElements()) {
 
-        //show figures for this rental
-        result += "\t" + each.getMovie().getTitle()+ "\t" +
-            String.valueOf(each.getCharge(each)) + "\n";
-
-     }
-     //add footer lines
-     result +=  "Amount owed is " + String.valueOf(getTotalCharge(each)) + "\n";
-     result += "You earned " + String.valueOf(getTotalFrequentRenterPoints()) +
-             " frequent renter points";
-     return result;
-   }
-
-   private double getTotalCharge(Rental each) {
+   static double getTotalCharge(Rental each) {
       double result = 0;
       Enumeration rentals = _rentals.elements();
       while (rentals.hasMoreElements()) {
@@ -47,7 +27,7 @@ public class Customer {
          return result;
    }
 
-   private int getTotalFrequentRenterPoints(){
+   static int getTotalFrequentRenterPoints(){
       int result = 0;
       Enumeration rentals = _rentals.elements();
       while (rentals.hasMoreElements()) {
@@ -57,23 +37,12 @@ public class Customer {
       return result;
    }
 
+   public String statement() {
+      return new TextStatement().value(this);
+   }
+
    public String htmlStatement() {
-      Enumeration rentals = _rentals.elements();
-      Rental each = (Rental) rentals.nextElement();
-      String result = "<H1>Rentals for <EM>" + getName() + "</EM></H1><P>\n";
-      while (rentals.hasMoreElements()) {
-         
-         // show figures for each rental
-         result += each.getMovie().getTitle()+ ": " +
-                  String.valueOf(each.getCharge(each)) + "<BR>\n";
-      }
-      
-      // add footer lines
-      result +=  "<P>You owe <EM>" + String.valueOf(getTotalCharge(each)) + "</EM><P>\n";
-      result += "On this rental you earned <EM>" +
-            String.valueOf(getTotalFrequentRenterPoints()) +
-            "</EM> frequent renter points<P>";
-      return result;
+      return new HtmlStatement().value(this);
    }
 
 }
